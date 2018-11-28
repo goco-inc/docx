@@ -49,7 +49,8 @@ module Docx
           {
             italic:    !@node.xpath('.//w:i').empty?,
             bold:      !@node.xpath('.//w:b').empty?,
-            underline: !@node.xpath('.//w:u').empty?
+            underline: !@node.xpath('.//w:u').empty?,
+            strikethrough: !@node.xpath('.//w:strike').empty?,
           }
         end
 

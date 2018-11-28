@@ -120,8 +120,6 @@ module Docx
       @replace[entry_path] = file_contents
     end
 
-    private
-
     #--
     # TODO: Flesh this out to be compatible with other files
     # TODO: Method to set flag on files that have been edited, probably by inserting something at the
