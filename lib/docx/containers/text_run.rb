@@ -42,7 +42,27 @@ module Docx
 
         # Returns text contained within text run
         def parse_text
-          @text_nodes.map(&:content).join('')
+          result = +''
+
+          @node.children.each do |child|
+            if child.name == 't'
+              # Get the content
+              content = child.children[0].content
+
+              # Strip excess whitespace, unless it asks us to preserve whitespace
+              unless child.attribute('space')&.value == 'preserve'
+                content = content.gsub(/\s+/, ' ')
+                content.strip!
+              end
+
+              binding.pry unless content
+              result << content
+            elsif child.name == 'br'
+              result << "\n"
+            end
+          end
+
+          result
         end
 
         def parse_formatting
