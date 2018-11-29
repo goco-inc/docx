@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'docx/containers/text_run'
 require 'docx/containers/container'
 
@@ -24,15 +26,15 @@ module Docx
 
         # Array of paragraphs contained within cell
         def paragraphs
-          @node.xpath('w:p').map {|p_node| Containers::Paragraph.new(p_node) }
+          @node.xpath('w:p').map { |p_node| Containers::Paragraph.new(p_node) }
         end
 
         # Iterate over each text run within a paragraph's cell
         def each_paragraph
           paragraphs.each { |tr| yield(tr) }
         end
-        
-        alias_method :text, :to_s
+
+        alias text to_s
       end
     end
   end

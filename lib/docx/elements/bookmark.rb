@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'docx/elements/element'
 
 module Docx
@@ -5,7 +7,7 @@ module Docx
     class Bookmark
       include Element
       attr_accessor :name
-      
+
       def self.tag
         'bookmarkStart'
       end
@@ -31,11 +33,11 @@ module Docx
       def insert_multiple_lines(text_array)
         # Hold paragraphs to be inserted into, corresponding to the index of the strings in the text array
         paragraphs = []
-        paragraph = self.parent_paragraph
+        paragraph = parent_paragraph
         # Remove text from paragraph
         paragraph.blank!
         paragraphs << paragraph
-        for i in 0...(text_array.size - 1)
+        (0...(text_array.size - 1)).each do |i|
           # Copy previous paragraph
           new_p = paragraphs[i].copy
           # Insert as sibling of previous paragraph
@@ -51,10 +53,10 @@ module Docx
 
       # Get text run immediately prior to bookmark node
       def get_run_before
-        # at_xpath returns the first match found and preceding-sibling returns siblings in the 
+        # at_xpath returns the first match found and preceding-sibling returns siblings in the
         # order they appear in the document not the order as they appear when moving out from
         # the starting node
-        if not (r_nodes = @node.xpath("./preceding-sibling::w:r")).empty?
+        if !(r_nodes = @node.xpath("./preceding-sibling::w:r")).empty?
           r_node = r_nodes.last
           Containers::TextRun.new(r_node)
         else

@@ -1,4 +1,5 @@
-# coding: utf-8
+# frozen_string_literal: true
+
 require 'docx'
 require 'tempfile'
 
@@ -91,7 +92,7 @@ describe Docx::Document do
     end
   end
 
-  describe 'editing'  do
+  describe 'editing' do
     before do
       @doc = Docx::Document.open(@fixtures_path + '/editing.docx')
     end
@@ -155,8 +156,7 @@ describe Docx::Document do
     end
 
     it 'should allow content deletion' do
-      expect{@doc.paragraphs.first.remove!}.to change{@doc.paragraphs.size}.by(-1)
-
+      expect { @doc.paragraphs.first.remove! }.to change { @doc.paragraphs.size }.by(-1)
     end
   end
 
@@ -187,7 +187,6 @@ describe Docx::Document do
     end
 
     it 'should contain a paragraph with multiple text runs' do
-
     end
 
     it 'should detect normal formatting' do
@@ -225,12 +224,12 @@ describe Docx::Document do
       expect(@doc.paragraphs[5].text_runs[0].italicized?).to eq(false)
       expect(@doc.paragraphs[5].text_runs[0].bolded?).to eq(false)
       expect(@doc.paragraphs[5].text_runs[0].underlined?).to eq(false)
-      
+
       expect(@formatting[5][1]).to eq(@all_formatted)
       expect(@doc.paragraphs[5].text_runs[1].italicized?).to eq(true)
       expect(@doc.paragraphs[5].text_runs[1].bolded?).to eq(true)
       expect(@doc.paragraphs[5].text_runs[1].underlined?).to eq(true)
-      
+
       expect(@formatting[5][2]).to eq(@default_formatting)
       expect(@doc.paragraphs[5].text_runs[2].italicized?).to eq(false)
       expect(@doc.paragraphs[5].text_runs[2].bolded?).to eq(false)
@@ -301,11 +300,11 @@ describe Docx::Document do
       temp_file.close
       temp_file.unlink
       # ensure temp file has been removed
-      expect(File.exists?(@new_doc_path)).to eq(false)
+      expect(File.exist?(@new_doc_path)).to eq(false)
     end
 
     after do
-      if File.exists?(@new_doc_path)
+      if File.exist?(@new_doc_path)
         File.delete(@new_doc_path)
       end
     end
@@ -327,7 +326,7 @@ describe Docx::Document do
       expect(scan.last).to eq('</p>')
       expect(scan[1]).to eq('Normal')
     end
-   
+
     it 'should emphasize italicized text' do
       scan = @doc.paragraphs[1].to_html.scan(@em_regex).flatten
       expect(scan.first).to eq('<em')
@@ -355,7 +354,7 @@ describe Docx::Document do
     end
 
     it "should set font size on styled paragraphs" do
-      regex = /(\<p{1})[^\>]+style\=\"([^\"]+).+(<\/p>)/      
+      regex = /(\<p{1})[^\>]+style\=\"([^\"]+).+(<\/p>)/
       scan = @doc.paragraphs[9].to_html.scan(regex).flatten
       expect(scan.first).to eq '<p'
       expect(scan.last).to eq '</p>'
@@ -395,14 +394,13 @@ describe Docx::Document do
     it 'should output styled html' do
       expect(@formatted_line.to_html.scan('<span style="text-decoration:underline;"><strong><em>all</em></strong></span>').size).to eq 1
     end
-
   end
 
   describe 'replacing contents' do
     let(:replacement_file_path) { @fixtures_path + '/replacement.png' }
-    let(:temp_file_path){ Tempfile.new(['docx_gem', '.docx']).path }
-    let(:entry_path){ 'word/media/image1.png' }
-    let(:doc){ Docx::Document.open(@fixtures_path + '/replacement.docx') }
+    let(:temp_file_path) { Tempfile.new(['docx_gem', '.docx']).path }
+    let(:entry_path) { 'word/media/image1.png' }
+    let(:doc) { Docx::Document.open(@fixtures_path + '/replacement.docx') }
 
     it 'should replace existing file within the document' do
       File.open replacement_file_path, "rb" do |io|
@@ -412,15 +410,14 @@ describe Docx::Document do
       doc.save(temp_file_path)
 
       File.open replacement_file_path, "rb" do |io|
-        expect(Zip::File.open(temp_file_path).read entry_path).to eq io.read
+        expect(Zip::File.open(temp_file_path).read(entry_path)).to eq io.read
       end
     end
 
     after do
-      if File.exists?(temp_file_path)
+      if File.exist?(temp_file_path)
         File.delete(temp_file_path)
       end
     end
   end
 end
-

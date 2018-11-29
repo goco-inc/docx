@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 unless Object.const_defined?("ActiveSupport")
   class Module
     # Provides a delegate class method to easily expose contained objects' public methods

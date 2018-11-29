@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'docx/containers/text_run'
 require 'docx/containers/container'
 
@@ -12,7 +14,6 @@ module Docx
           'p'
         end
 
-
         # Child elements: pPr, r, fldSimple, hlink, subDoc
         # http://msdn.microsoft.com/en-us/library/office/ee364458(v=office.11).aspx
         def initialize(node, document_properties = {})
@@ -26,11 +27,11 @@ module Docx
         def text=(content)
           if text_runs.size == 1
             text_runs.first.text = content
-          elsif text_runs.size == 0
+          elsif text_runs.empty?
             new_r = TextRun.create_within(self)
             new_r.text = content
           else
-            text_runs.each {|r| r.node.remove }
+            text_runs.each { |r| r.node.remove }
             new_r = TextRun.create_within(self)
             new_r.text = content
           end
@@ -51,7 +52,6 @@ module Docx
           styles['text-align'] = alignment if alignment
           html_tag(:p, content: html, styles: styles)
         end
-
 
         # Array of text runs contained within paragraph
         def text_runs
@@ -79,8 +79,8 @@ module Docx
           size_tag = @node.xpath('w:pPr//w:sz').first
           size_tag ? size_tag.attributes['val'].value.to_i / 2 : @font_size
         end
-        
-        alias_method :text, :to_s
+
+        alias text to_s
 
         private
 
@@ -89,7 +89,6 @@ module Docx
           alignment_tag = @node.xpath('.//w:jc').first
           alignment_tag ? alignment_tag.attributes['val'].value : nil
         end
-
       end
     end
   end

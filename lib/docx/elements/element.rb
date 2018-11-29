@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'nokogiri'
 require 'docx/elements'
 require 'docx/containers'
@@ -14,7 +16,7 @@ module Docx
       end
 
       attr_accessor :node
-      delegate :at_xpath, :xpath, :to => :@node
+      delegate :at_xpath, :xpath, to: :@node
 
       # TODO: Should create a docx object from this
       def parent(type = '*')
@@ -66,23 +68,23 @@ module Docx
         content = options[:content]
         styles = options[:styles]
 
-        html = "<#{name.to_s}"
+        html = "<#{name}"
         unless styles.nil? || styles.empty?
           styles_array = []
           styles.each do |property, value|
-            styles_array << "#{property.to_s}:#{value};"
+            styles_array << "#{property}:#{value};"
           end
           html << " style=\"#{styles_array.join('')}\""
         end
         html << ">"
         html << content if content
-        html << "</#{name.to_s}>"
+        html << "</#{name}>"
       end
 
       module ClassMethods
         def create_with(element)
           # Need to somehow get the xml document accessible here by default, but this is alright in the interim
-          self.new(Nokogiri::XML::Node.new("w:#{self.tag}", element.node))
+          new(Nokogiri::XML::Node.new("w:#{tag}", element.node))
         end
 
         def create_within(element)

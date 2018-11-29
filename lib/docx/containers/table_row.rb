@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'docx/containers/table_cell'
 require 'docx/containers/container'
 
@@ -19,9 +21,8 @@ module Docx
 
         # Array of cells contained within row
         def cells
-          @node.xpath('w:tc').map {|c_node| Containers::TableCell.new(c_node) }
+          @node.xpath('w:tc').map { |c_node| Containers::TableCell.new(c_node) }
         end
-        
       end
     end
   end

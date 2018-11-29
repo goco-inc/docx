@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'docx/containers/table_cell'
 require 'docx/containers/container'
 
@@ -19,10 +21,7 @@ module Docx
         end
 
         # Array of cells contained within row
-        def cells
-          @cells
-        end
-        
+        attr_reader :cells
       end
     end
   end
