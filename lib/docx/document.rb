@@ -18,7 +18,7 @@ module Docx
   #     puts d.text
   #   end
   class Document
-    attr_reader :xml, :doc, :zip, :styles
+    attr_reader :xml, :doc, :zip, :styles, :numbering
     
     def initialize(path, &block)
       @replace = {}
@@ -27,6 +27,12 @@ module Docx
       @doc = Nokogiri::XML(@document_xml)
       @styles_xml = @zip.read('word/styles.xml')
       @styles = Nokogiri::XML(@styles_xml)
+
+      if @zip.find_entry('word/numbering.xml')
+        @numbering_xml = @zip.read('word/numbering.xml')
+        @numbering = Nokogiri::XML(@numbering_xml)
+      end
+
       if block_given?
         yield self
         @zip.close
@@ -41,6 +47,38 @@ module Docx
       }
     end
 
+    # Returns a hash that maps the numbering instances in a document (numid, ilvl) to
+    # a string that indicates their format (eg, 'bullet', 'decimal', 'lowerLetter')
+    def numbering_styles
+      return {} unless numbering
+
+      @numbering_styles ||= begin
+        result = {}
+
+        # Get the abstract numberings, and map them to their formats
+        formats = Hash.new { |h, k| h[k] = {} }
+
+        numbering.xpath('/w:numbering/w:abstractNum').each do |abstract_num|
+          abstract_num_id = abstract_num.attribute('abstractNumId').value
+          abstract_num.xpath('w:lvl').each do |lvl|
+            ilvl = lvl.attribute('ilvl').value
+            fmt = lvl.at_xpath('w:numFmt').attribute('val').value
+            formats[abstract_num_id][ilvl] = fmt
+          end
+        end
+
+        if @numbering
+          @numbering.xpath('/w:numbering/w:num').each do |num_element|
+            num_id = num_element.attribute('numId').value
+            abstract_num_id = num_element.at_xpath('w:abstractNumId').attribute('val').value
+            result[num_id] = formats[abstract_num_id]
+          end
+        end
+
+        result.deep_freeze
+        result
+      end
+    end
 
     # With no associated block, Docx::Document.open is a synonym for Docx::Document.new. If the optional code block is given, it will be passed the opened +docx+ file as an argument and the Docx::Document oject will automatically be closed when the block terminates. The values of the block will be returned from Docx::Document.open.
     # call-seq:
